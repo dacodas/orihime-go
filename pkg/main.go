@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"./cmd"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/google/subcommands"
 )
@@ -23,4 +24,5 @@ func checkDatabase() {
 
 func main() {
 	checkDatabase()
+	cmd.Execute()
 }
