@@ -1,0 +1,59 @@
+func addChildWord
+	(
+		word string, 
+		definition string, 
+		source string, 
+		user string, 
+		parentTextHash []byte
+	)
+int wordId = addWord(word, definition, source)
+addWordRelation(user, parentTextHash, wordId)
+
+
+
+func addText
+	(
+		contents string, 
+		source string
+	)
+textHash := sha256.Sum256([]byte(contents))
+INSERT INTO text (contents, hash, source) 
+SELECT 
+	? AS contents,
+	? AS hash,
+	source.id AS source 
+FROM source WHERE source.name = ?
+contents, textHash[:], source
+func addWord
+	(
+		word string, 
+		definitionText string, 
+		source string
+	)
+definitionTextId := addText(definitionText, source)
+INSERT INTO word (word, definition)
+VALUES (?, ?)
+word, definition
+func addSource
+	(
+		source string
+	)
+
+INSERT INTO source (name) VALUES (?)
+string
+func addWordRelation
+	(
+		userEmail string, 
+		parentTextHash []byte
+		wordId int
+	)
+
+INSERT INTO word_relation (user, text, word) 
+SELECT 
+	user.id AS user,
+	text.id AS text,
+	? AS word
+FROM user 
+INNER JOIN text ON text.hash = ?
+WHERE user.email = ?
+wordId, parentTextHash[:], userEmail

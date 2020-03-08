@@ -1,0 +1,19 @@
+#!/bin/bash
+
+while IFS="$(printf '\x1F')" read -a COLUMNS "-d$(printf '\x1E')"
+do 
+	# echo "There are "${#COLUMNS[@]}" columns"
+
+	FUNCTION_SIGNATURE="${COLUMNS[0]}" \ 
+	PREPARATION="${COLUMNS[1]}" \
+	SQL_STATEMENT="${COLUMNS[2]}" \
+	ARGUMENTS="${COLUMNS[3]}" \
+	envsubst < sql-insert-skeleton 
+
+	for COLUMN in "${COLUMNS[@]}"
+	do 
+		# echo "This column is ${#COLUMN} chars long"
+		# echo "${COLUMN}"
+		echo ""
+	done
+done < function-skeletons

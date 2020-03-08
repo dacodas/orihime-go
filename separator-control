@@ -1,0 +1,14 @@
+#!/bin/bash 
+
+US=$(printf '\x1F')
+RS=$(printf '\x1E')
+
+expand() {
+	sed -E "s/[${US}${RS}]/&\n/g"
+}
+
+contract () {
+	sed -zE "s/([${US}${RS}])\n/\1/g"
+}
+
+"$1"
