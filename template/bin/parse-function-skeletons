@@ -1,14 +1,16 @@
 #!/bin/bash
 
+< /dev/null > build/templated-functions
+
 while IFS="$(printf '\x1F')" read -a COLUMNS "-d$(printf '\x1E')"
 do 
 	# echo "There are "${#COLUMNS[@]}" columns"
 
-	FUNCTION_SIGNATURE="${COLUMNS[0]}" \ 
+	FUNCTION_SIGNATURE="${COLUMNS[0]}" \
 	PREPARATION="${COLUMNS[1]}" \
 	SQL_STATEMENT="${COLUMNS[2]}" \
 	ARGUMENTS="${COLUMNS[3]}" \
-	envsubst < sql-insert-skeleton 
+	envsubst < template/sql-insert-skeleton | tee -a build/templated-functions
 
 	for COLUMN in "${COLUMNS[@]}"
 	do 
@@ -16,4 +18,6 @@ do
 		# echo "${COLUMN}"
 		echo ""
 	done
-done < function-skeletons
+done < build/function-skeletons.contracted
+
+cat template/preamble build/templated-functions > build/sql.go

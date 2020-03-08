@@ -1,0 +1,8 @@
+package main
+
+import (
+	"log"
+	"crypto/sha256"
+	_ "github.com/go-sql-driver/mysql"
+)
+

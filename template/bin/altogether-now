@@ -1,0 +1,9 @@
+#!/bin/bash
+
+./bin/separator-control contract \
+	< src/function-skeletons.expanded \
+	> build/function-skeletons.contracted
+
+./bin/parse-function-skeletons
+
+cp ./build/sql.go ../sql.go
