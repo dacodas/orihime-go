@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"encoding/hex"
 	"io/ioutil"
 	"orihime/internal"
 
@@ -16,7 +17,8 @@ var (
 	Word string
 	ChildWord string
 	Definition string
-	Text string
+	ParentTextHashHexString string
+	ParentTextHash []uint8
 	Input string
 )
 
@@ -66,24 +68,52 @@ func checkStdinOrAnotherArgument(args []string) {
 	fmt.Println("Input status is ", inputStatus)
 }
 
-func ensureDefinition() { }
-func ensureSource() { }
-func ensureParentTextHash() { }
+func exitNotSpecified(unspecifiedObject string) {
+	fmt.Println("Error: " + unspecifiedObject + " not specified")
+	os.Exit(1)
+}
+
+func ensureDefinition() { 
+	if Definition == "" {
+		exitNotSpecified("definition")
+	}
+}
+
+func ensureSource() { 
+	if Source == "" {
+		exitNotSpecified("source")
+	}
+}
+
+func ensureParentTextHash() {
+	if ParentTextHashHexString == "" {
+		exitNotSpecified("parent-text")
+	}
+
+	var hashErr error
+	ParentTextHash, hashErr = hex.DecodeString(ParentTextHashHexString)
+	if hashErr != nil {
+		log.Fatal(hashErr)
+		os.Exit(1)
+	}
+}
 
 func determineWhatToAdd(args []string) {
 	switch args[0] {
 	case "source":
-		internal.AddSource(args[1])
+		internal.AddSource(Input)
 	case "word":
 		ensureDefinition()
 		ensureSource()
 		internal.AddWord(Input, Definition, Source)
-	case "childword":
+	case "child-word":
 		ensureDefinition()
 		ensureSource()
 		ensureParentTextHash()
+		internal.AddChildWord(Input, Definition, Source, "test.user@gmail.com", ParentTextHash)
 	case "text":
 		ensureSource()
+		internal.AddText(Input, Source)
 	default:
 		fmt.Println("Unknown orihime object to add: " + args[0])
 	}
@@ -105,9 +135,8 @@ var addCmd = &cobra.Command{
 func init() {
 	addCmd.Flags().StringVarP(&Source, "source", "s", "", "the source to add or the source associated with the object being added")
 	addCmd.Flags().StringVarP(&Word, "word", "w", "", "the word to add")
-	addCmd.Flags().StringVarP(&ChildWord, "childword", "c", "", "the child word to add")
 	addCmd.Flags().StringVarP(&Definition, "definition", "d", "", "the definition to add")
-	addCmd.Flags().StringVarP(&Text, "text", "t", "", "the text to add")
+	addCmd.Flags().StringVarP(&ParentTextHashHexString, "parent-text", "p", "", "the parent text")
 
 	rootCmd.AddCommand(addCmd)
 }

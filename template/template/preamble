@@ -4,6 +4,7 @@ import (
 	"log"
 	"database/sql"
 	"crypto/sha256"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -13,7 +14,7 @@ func checkDatabase() {
 	if err != nil {
 		panic(err.Error())
 	}
-	defer db.Close()
+	// defer db.Close()
 
 	// Open doesn't open a connection. Validate DSN data:
 	err = db.Ping()

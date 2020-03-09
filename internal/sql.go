@@ -4,6 +4,7 @@ import (
 	"log"
 	"database/sql"
 	"crypto/sha256"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -13,7 +14,7 @@ func checkDatabase() {
 	if err != nil {
 		panic(err.Error())
 	}
-	defer db.Close()
+	// defer db.Close()
 
 	// Open doesn't open a connection. Validate DSN data:
 	err = db.Ping()
@@ -57,15 +58,15 @@ AddWordRelation(user, parentTextHash, wordId)
 
 	return lastId
 }
-func AddText (contents string, 
+func AddText (contents string,
 	source string) int64 {
 	textHash := sha256.Sum256([]byte(contents))
 
-	stmt, err := db.Prepare(`INSERT INTO text (contents, hash, source) 
-SELECT 
+	stmt, err := db.Prepare(`INSERT INTO text (contents, hash, source)
+SELECT
 	? AS contents,
 	? AS hash,
-	source.id AS source 
+	source.id AS source
 FROM source WHERE source.name = ?`)
 	if err != nil {
 		log.Fatal(err)
@@ -90,10 +91,13 @@ FROM source WHERE source.name = ?`)
 
 	return lastId
 }
-func AddWord(word string, 
-	definitionText string, 
+func AddWord(word string,
+	definitionText string,
 	source string) int64 {
-	definitionTextId := AddText(definitionText, source)
+	
+definitionTextId := AddText(definitionText, source)
+fmt.Println("Using", definitionTextId, "as the foreign key for this next word")
+
 
 	stmt, err := db.Prepare(`INSERT INTO word (word, definition)
 VALUES (?, ?)`)
@@ -147,17 +151,17 @@ func AddSource(source string) int64 {
 
 	return lastId
 }
-func AddWordRelation(userEmail string, 
+func AddWordRelation(userEmail string,
 	parentTextHash []byte,
 	wordId int64) int64 {
 	
 
-	stmt, err := db.Prepare(`INSERT INTO word_relation (user, text, word) 
-SELECT 
+	stmt, err := db.Prepare(`INSERT INTO word_relation (user, text, word)
+SELECT
 	user.id AS user,
 	text.id AS text,
 	? AS word
-FROM user 
+FROM user
 INNER JOIN text ON text.hash = ?
 WHERE user.email = ?`)
 	if err != nil {
