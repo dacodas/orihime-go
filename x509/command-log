@@ -1,3 +1,0 @@
-openssl req -nodes -x509 -sha256 -newkey rsa:4096 -keyout client-signing-agent.key -out client-signing-agent.crt -days 365 -subj "/CN=Orihime Client Signing Agent"
-openssl dgst -sha256 -sign client-signing-agent.key -out token.json.sha256 token.json 
-openssl dgst -sha256 -verify <(openssl x509 -in client-signing-agent.crt -pubkey -noout) -signature token.json.sha256 token.json
