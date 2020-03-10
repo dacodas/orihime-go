@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package orihime;
+
+service Orihime {
+    rpc AddText(TextToAdd) returns (TextAdded) {}
+    rpc AddWord(WordToAdd) returns (WordAdded) {}
+    rpc AddSource(Source) returns (SourceAdded) {}
+    rpc AddChildWord(ChildWord) returns (ChildWordAdded) {}
+}
+
+message Source {
+    string source = 1;
+}
+
+message SourceAdded {
+
+}
+
+message WordToAdd {
+    string word = 1;
+    string definitionText = 2;
+    string source = 3;
+}
+
+message WordAdded {
+
+}
+
+message TextToAdd {
+    string content = 1;
+    string source = 2;
+}
+
+message TextAdded {
+
+}
+
+message ChildWord {
+    string word = 1;
+    string definition = 2;
+    string source = 3;
+    string user = 4; 
+    bytes parentTextHash = 5;    
+}
+
+message ChildWordAdded {
+    
+}
