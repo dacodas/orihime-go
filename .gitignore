@@ -1,0 +1,5 @@
+internal/database/sql.template.go
+**/*.pb.go
+tools/x509/**/*.pem
+tools/x509/**/*.sha256
+tools/x509/**/*.signed
