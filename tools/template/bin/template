@@ -33,7 +33,7 @@ main() {
 
 	template_functions
 
-	cp ./build/sql.go ../../internal/database/sql.go
+	cp ./build/sql.go ../../internal/database/sql.template.go
 }
 
 main
