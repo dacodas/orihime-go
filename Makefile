@@ -6,7 +6,7 @@ build: internal/database/sql.go internal/protobuf/orihime.pb.go
 	go build -o orihime orihime/cmd/orihime
 
 internal/database/sql.go: tools/template/src/function-skeletons.expanded $(shell find tools/template/template -type f)
-	( cd tools/template ; ./bin/altogether-now )
+	( cd tools/template ; ./bin/template )
 
 internal/protobuf/orihime.pb.go: tools/protobuf/orihime.proto 
 	protoc tools/protobuf/orihime.proto --go_out=plugins=grpc:internal/protobuf/
