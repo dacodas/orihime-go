@@ -6,4 +6,4 @@
 
 ./bin/parse-function-skeletons
 
-cp ./build/sql.go ../internal/sql.go
+cp ./build/sql.go ../../internal/database/sql.go
