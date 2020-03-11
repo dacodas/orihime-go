@@ -1,5 +1,6 @@
 #!/bin/bash
 
+mkdir -p build
 < /dev/null > build/templated-functions
 
 while IFS="$(printf '\x1F')" read -a COLUMNS "-d$(printf '\x1E')"
