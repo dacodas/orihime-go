@@ -8,7 +8,7 @@ build/orihime-server: build/orihime
 build/orihime: \
 	internal/database/sql.template.go \
 	internal/protobuf/orihime.pb.go \
-	$(shell find cmd internal pkg -type f -name '*.go')
+	$(shell find cmd internal -type f -name '*.go')
 
 	@echo "Make sure to symlink 'ln -s \$${PWD} \$${HOME}/go/src/orihime'"
 	@echo "Make sure to 'go get ./cmd ./internal'"
