@@ -1,27 +1,40 @@
 #!/bin/bash
 
+set -euo pipefail
+
+SEPARATOR_1="$(printf '\x1F')"
+SEPARATOR_2="$(printf '\x1E')"
+
+loop_over_configuration() {
+	while IFS=${SEPARATOR_1} read -a COLUMNS "-d${SEPARATOR_2}"
+	do 
+		export COLUMNS
+		${@}
+	done < build/function-skeletons.contracted
+}
+
+perform_envsubst() {
+	FUNCTION_SIGNATURE="${COLUMNS[0]}" \
+	PREPARATION="${COLUMNS[1]}" \
+	SQL_STATEMENT="${COLUMNS[2]}" \
+	ARGUMENTS="${COLUMNS[3]}" \
+	envsubst < template/sql-insert-skeleton | tee -a build/templated-functions
+}
+
 template_functions() {
 	< /dev/null > build/templated-functions
 
-	while IFS="$(printf '\x1F')" read -a COLUMNS "-d$(printf '\x1E')"
-	do 
-		# echo "There are "${#COLUMNS[@]}" columns"
-
-		FUNCTION_SIGNATURE="${COLUMNS[0]}" \
-		PREPARATION="${COLUMNS[1]}" \
-		SQL_STATEMENT="${COLUMNS[2]}" \
-		ARGUMENTS="${COLUMNS[3]}" \
-		envsubst < template/sql-insert-skeleton | tee -a build/templated-functions
-
-		for COLUMN in "${COLUMNS[@]}"
-		do 
-			# echo "This column is ${#COLUMN} chars long"
-			# echo "${COLUMN}"
-			echo ""
-		done
-	done < build/function-skeletons.contracted
+	loop_over_configuration perform_envsubst
 
 	cat template/preamble build/templated-functions > build/sql.go
+}
+
+show_signature() {
+	echo "${COLUMNS[0]}"
+}
+
+show_signatures() {
+	loop_over_configuration show_signature
 }
 
 main() {
@@ -36,4 +49,11 @@ main() {
 	cp ./build/sql.go ../../internal/database/sql.template.go
 }
 
-main
+case $1 in 
+show-signatures)
+	show_signatures	
+	;;
+*)	
+	main
+	;;
+esac
