@@ -3,3 +3,5 @@ internal/database/sql.template.go
 tools/x509/**/*.pem
 tools/x509/**/*.sha256
 tools/x509/**/*.signed
+tools/template/build
+build
