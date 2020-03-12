@@ -7,7 +7,8 @@ import (
 	"strings"
 	"encoding/hex"
 	"io/ioutil"
-	"orihime/internal/database"
+	// "orihime/internal/database"
+	"orihime/internal/client"
 
 	"github.com/spf13/cobra"
 )
@@ -101,19 +102,19 @@ func ensureParentTextHash() {
 func determineWhatToAdd(args []string) {
 	switch args[0] {
 	case "source":
-		database.AddSource(Input)
+		client.AddSource(Input)
 	case "word":
 		ensureDefinition()
 		ensureSource()
-		database.AddWord(Input, Definition, Source)
+		client.AddWord(Input, Definition, Source)
 	case "child-word":
 		ensureDefinition()
 		ensureSource()
 		ensureParentTextHash()
-		database.AddChildWord(Input, Definition, Source, "test.user@gmail.com", ParentTextHash)
+		client.AddChildWord(Input, Definition, Source, "test.user@gmail.com", ParentTextHash)
 	case "text":
 		ensureSource()
-		database.AddText(Input, Source)
+		client.AddText(Input, Source)
 	default:
 		fmt.Println("Unknown orihime object to add: " + args[0])
 	}

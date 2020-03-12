@@ -5,11 +5,11 @@ package protobuf;
 service Orihime {
     rpc AddText(TextToAdd) returns (TextAdded) {}
     rpc AddWord(WordToAdd) returns (WordAdded) {}
-    rpc AddSource(Source) returns (SourceAdded) {}
-    rpc AddChildWord(ChildWord) returns (ChildWordAdded) {}
+    rpc AddSource(SourceToAdd) returns (SourceAdded) {}
+    rpc AddChildWord(ChildWordToAdd) returns (ChildWordAdded) {}
 }
 
-message Source {
+message SourceToAdd {
     string source = 1;
 }
 
@@ -36,7 +36,7 @@ message TextAdded {
 
 }
 
-message ChildWord {
+message ChildWordToAdd {
     string word = 1;
     string definition = 2;
     string source = 3;
