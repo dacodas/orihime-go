@@ -4,7 +4,7 @@ import (
 	"context"
 	"crypto"
 	"math/big"
-	"fmt"
+	"log"
 	"crypto/rsa"
 	"crypto/sha256"
 	"encoding/base64"
@@ -20,11 +20,11 @@ var (
 func verifyToken(hashed []uint8, signature []uint8) bool {
 	err := rsa.VerifyPSS(&publicKey, crypto.SHA256, hashed, signature, &pssOptions)
 	if err == nil {
-		fmt.Println("Correctly signed token")
+		log.Printf("Correctly signed token")
 		return true
 	} else {
-		fmt.Println("That token is not correctly signed")
-		fmt.Println(err)
+		log.Printf("That token is not correctly signed")
+		log.Printf("%v", err)
 		return false
 	}
 }
@@ -43,31 +43,31 @@ func VerifyCallToken(ctx context.Context) bool {
 	)
 
 	if md, ok = metadata.FromIncomingContext(ctx); !ok {
-		fmt.Println("Unable to get metadata from context")
+		log.Printf("Unable to get metadata from context")
 		return false
 	}
 
 	if tokenStrings, ok = md["token"]; !ok {
-		fmt.Println("Unable to token from metadata")
+		log.Printf("Unable to token from metadata")
 		return false
 	}
 
 	if signatureStrings, ok = md["signature"]; !ok {
-		fmt.Println("Unable to signature from metadata")
+		log.Printf("Unable to signature from metadata")
 		return false
 	}
 
-	fmt.Println("Received token: ", tokenStrings)
-	fmt.Println("Received signature: ", signatureStrings)
+	log.Printf("Received token: ", tokenStrings)
+	log.Printf("Received signature: ", signatureStrings)
 
 	token, err = base64.StdEncoding.DecodeString(tokenStrings[0])
 	if err != nil {
-		fmt.Println("Error decoding token")
+		log.Printf("Error decoding token")
 		return false
 	}
 	signature, err = base64.StdEncoding.DecodeString(signatureStrings[0])
 	if err != nil {
-		fmt.Println("Error decoding signature")
+		log.Printf("Error decoding signature")
 		return false
 	}
 

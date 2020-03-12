@@ -23,7 +23,7 @@ func AddWord(word string,
 	source string) int64
 
 definitionTextId := AddText(definitionText, source)
-fmt.Println("Using", definitionTextId, "as the foreign key for this next word")
+log.Printf("Using", definitionTextId, "as the foreign key for this next word")
 
 INSERT INTO word (word, definition)
 VALUES (?, ?)
