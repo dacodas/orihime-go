@@ -1,7 +1,15 @@
 export PATH := /opt/local/libexec/gnubin:$(PATH)
 export ORIHIME_ROOT := $(PWD)
 
-build/orihime: internal/database/sql.template.go internal/protobuf/orihime.pb.go
+build/orihime-server: build/orihime
+
+	go build -o build/orihime-server orihime/cmd/orihime-server
+	
+build/orihime: \
+	internal/database/sql.template.go \
+	internal/protobuf/orihime.pb.go \
+	$(shell find cmd internal pkg -type f -name '*.go')
+
 	@echo "Make sure to symlink 'ln -s \$${PWD} \$${HOME}/go/src/orihime'"
 	@echo "Make sure to 'go get ./cmd ./internal'"
 	go build -o build/orihime orihime/cmd/orihime
