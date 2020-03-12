@@ -49,6 +49,12 @@ main() {
 	cp ./build/sql.go ../../internal/database/sql.template.go
 }
 
+if [ $# -eq 0 ]
+then
+	main
+	exit 0
+fi
+
 case $1 in 
 show-signatures)
 	show_signatures	
