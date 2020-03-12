@@ -1,3 +1,5 @@
 #!/bin/bash
 
+# This is a terrifying pipeline, `od` doesn't output individual octets but rather hexadectets, so there might be an extraneous 0x00 at the end
+# `hexdump -C` doesn't display this regrettable behavior, but I'm unsure how to make it happen with `od`
 od -x -An --endian=big | tr -d ' \n'| sed -E 's/.{2}/0x&, /g' | sed 's/.*/{ & }/'
