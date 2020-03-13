@@ -45,3 +45,7 @@ FROM user
 INNER JOIN text ON text.hash = ?
 WHERE user.email = ?
 wordId, parentTextHash[:], userEmail
+func TextTree(parentTextHash []byte, user string) int64
+
+CALL TextTree(?, ?)
+parentTextHash, user

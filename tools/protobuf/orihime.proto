@@ -7,6 +7,7 @@ service Orihime {
     rpc AddWord(WordToAdd) returns (WordAdded) {}
     rpc AddSource(SourceToAdd) returns (SourceAdded) {}
     rpc AddChildWord(ChildWordToAdd) returns (ChildWordAdded) {}
+    rpc TextTree(TextTreeRequest) returns (TextTreeReply) {}
 }
 
 message SourceToAdd {
@@ -46,4 +47,20 @@ message ChildWordToAdd {
 
 message ChildWordAdded {
     
+}
+
+message TextTreeRequest {
+    bytes parentTextHash = 1;
+    string user = 2;
+}
+
+message TextTreeNode {
+    bytes parentTextHash = 1;
+    string word = 2;
+    string definition = 3;
+    string source = 4;
+}
+
+message TextTreeReply {
+    repeated TextTreeNode nodes = 1;
 }
