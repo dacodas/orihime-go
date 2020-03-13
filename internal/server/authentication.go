@@ -8,6 +8,8 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"encoding/base64"
+	"strconv"
+	"time"
 
 	metadata "google.golang.org/grpc/metadata"
 )
@@ -30,7 +32,6 @@ func verifyToken(hashed []uint8, signature []uint8) bool {
 }
 
 func VerifyCallToken(ctx context.Context) bool {
-
 	var (
 		md metadata.MD
 		hashed [32]byte
@@ -72,7 +73,35 @@ func VerifyCallToken(ctx context.Context) bool {
 	}
 
 	hashed = sha256.Sum256(token)
-	return verifyToken(hashed[:], signature)
+	if !verifyToken(hashed[:], signature) {
+		log.Printf("Token signature is incorrect")
+		return false
+	}
+
+	err = ReadConfiguration(token)
+	if err != nil {
+		log.Printf("Unable to unmarshal configuration from json token: %v", err)
+		return false
+	}
+
+	var expirationSecondsSinceEpoch int64
+	expirationSecondsSinceEpoch, err = strconv.ParseInt(Configuration.Expires, 10, 64)
+	if err != nil {
+		log.Printf("Error parsing uint64 from expires string")
+	}
+
+	log.Printf("Token expires %v", time.Unix(expirationSecondsSinceEpoch, 0))
+	log.Printf("Current time is %v", time.Now())
+
+	var currentSecondsSinceEpoch int64 = time.Now().Unix()
+	if ( expirationSecondsSinceEpoch < currentSecondsSinceEpoch ) {
+		log.Printf("This token has already expired")
+		return false
+	}
+
+	log.Printf("Configuration %v", Configuration)
+
+	return true
 }
 
 func init() {
