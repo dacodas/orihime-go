@@ -75,13 +75,13 @@ func exitNotSpecified(unspecifiedObject string) {
 	os.Exit(1)
 }
 
-func ensureDefinition() { 
+func ensureDefinition() {
 	if Definition == "" {
 		exitNotSpecified("definition")
 	}
 }
 
-func ensureSource() { 
+func ensureSource() {
 	if Source == "" {
 		exitNotSpecified("source")
 	}
