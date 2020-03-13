@@ -75,6 +75,12 @@ func exitNotSpecified(unspecifiedObject string) {
 	os.Exit(1)
 }
 
+func ensureUser() {
+	if User == "" {
+		exitNotSpecified("user")
+	}
+}
+
 func ensureDefinition() {
 	if Definition == "" {
 		exitNotSpecified("definition")
@@ -98,6 +104,8 @@ func ensureParentTextHash() {
 		log.Fatal(hashErr)
 		os.Exit(1)
 	}
+
+	log.Printf("Using hash %v, %v", ParentTextHashHexString, ParentTextHash)
 }
 
 func determineWhatToAdd(args []string) {
@@ -112,6 +120,7 @@ func determineWhatToAdd(args []string) {
 		ensureDefinition()
 		ensureSource()
 		ensureParentTextHash()
+		ensureUser()
 		client.AddChildWord(Input, Definition, Source, User, ParentTextHash)
 	case "text":
 		ensureSource()
