@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"log"
 	"orihime/internal/protobuf"
 	"orihime/internal/database"
 )
@@ -40,8 +41,16 @@ func (s *OrihimeServer) AddSource(ctx context.Context, req *protobuf.SourceToAdd
 
 func (s *OrihimeServer) AddChildWord(ctx context.Context, req *protobuf.ChildWordToAdd) (*protobuf.ChildWordAdded, error) {
 	verified := VerifyCallToken(ctx)
-	if verified {
-		database.AddChildWord(req.Word, req.Definition, req.Source, req.User, req.ParentTextHash)
+	if !verified {
+		log.Printf("Unverified token")
+		return &protobuf.ChildWordAdded{}, nil
 	}
+
+	if Configuration.User != req.User {
+		log.Printf("Token user %s doesn't match request user %s", Configuration.User, req.User)
+		return &protobuf.ChildWordAdded{}, nil
+	}
+
+	database.AddChildWord(req.Word, req.Definition, req.Source, req.User, req.ParentTextHash)
 	return &protobuf.ChildWordAdded{}, nil
 }

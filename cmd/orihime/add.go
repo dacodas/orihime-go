@@ -21,6 +21,7 @@ var (
 	ParentTextHashHexString string
 	ParentTextHash []uint8
 	Input string
+	User string
 )
 
 // https://stackoverflow.com/questions/22744443/check-if-there-is-something-to-read-on-stdin-in-golang
@@ -111,7 +112,7 @@ func determineWhatToAdd(args []string) {
 		ensureDefinition()
 		ensureSource()
 		ensureParentTextHash()
-		client.AddChildWord(Input, Definition, Source, "test.user@gmail.com", ParentTextHash)
+		client.AddChildWord(Input, Definition, Source, User, ParentTextHash)
 	case "text":
 		ensureSource()
 		client.AddText(Input, Source)
@@ -138,6 +139,7 @@ func init() {
 	addCmd.Flags().StringVarP(&Word, "word", "w", "", "the word to add")
 	addCmd.Flags().StringVarP(&Definition, "definition", "d", "", "the definition to add")
 	addCmd.Flags().StringVarP(&ParentTextHashHexString, "parent-text", "p", "", "the parent text")
+	addCmd.Flags().StringVarP(&User, "user", "u", "", "the user to use for this transaction")
 
 	rootCmd.AddCommand(addCmd)
 }
