@@ -58,8 +58,8 @@ func VerifyCallToken(ctx context.Context) bool {
 		return false
 	}
 
-	log.Printf("Received token: ", tokenStrings)
-	log.Printf("Received signature: ", signatureStrings)
+	log.Printf("Received token: %v", tokenStrings)
+	log.Printf("Received signature: %v", signatureStrings)
 
 	token, err = base64.StdEncoding.DecodeString(tokenStrings[0])
 	if err != nil {
