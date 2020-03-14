@@ -57,7 +57,7 @@ prepare_environment_sql_query() {
 }
 
 perform_envsubst() {
-	envsubst < template/${TEMPLATE}-skeleton >> build/${TEMPLATE}-templated
+	envsubst < src/${TEMPLATE}-skeleton >> build/${TEMPLATE}-templated
 }
 
 template_functions() {
@@ -65,7 +65,7 @@ template_functions() {
 
 	loop_over_functions perform_envsubst
 
-	cat template/${TEMPLATE}-preamble build/${TEMPLATE}-templated > build/${TEMPLATE}.templated.go
+	cat src/${TEMPLATE}-preamble build/${TEMPLATE}-templated > build/${TEMPLATE}.templated.go
 	go fmt build/${TEMPLATE}.templated.go
 }
 
