@@ -7,6 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 	metadata "google.golang.org/grpc/metadata"
 	"encoding/base64"
+	"encoding/json"
 )
 
 var (
@@ -37,6 +38,9 @@ func GetTextTree(textHash []byte, user string) {
 
 	log.Printf("%v", len(reply.Nodes))
 	log.Printf("%v", reply.Nodes)
+
+	jsonString, _ := json.Marshal(reply.Nodes)
+	log.Printf("%v", string(jsonString))
 }
 
 func init() {

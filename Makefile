@@ -2,7 +2,7 @@ export PATH := /opt/local/libexec/gnubin:$(PATH)
 export ORIHIME_ROOT := $(PWD)
 
 TEMPLATED_GO_SERVER_SOURCE := internal/database/sql-insert.templated.go internal/database/sql-query.templated.go
-PROTO_FILES := internal/protobuf/orihime.pb.go
+PROTO_FILES := internal/protobuf/orihime.pb.go internal/protobuf/orihime.pb.json.go
 COMMON_GO_SOURCE := $(PROTO_FILES)
 
 all: warning build/orihime build/orihime-server build/orihime-test
@@ -28,8 +28,8 @@ build/orihime: $(COMMON_GO_SOURCE) $(shell find cmd/orihime internal/client -nam
 build:
 	mkdir build
 
-internal/protobuf/orihime.pb.go: tools/protobuf/orihime.proto 
-	( cd tools/protobuf ; protoc --go_out=plugins=grpc:${ORIHIME_ROOT}/internal/protobuf orihime.proto )
+internal/protobuf/orihime.pb.go internal/protobuf/orihime.pb.json.go: tools/protobuf/orihime.proto
+	( cd tools/protobuf ; protoc --go_out=plugins=grpc:${ORIHIME_ROOT}/internal/protobuf --go-json_out=${ORIHIME_ROOT}/internal/protobuf orihime.proto )
 
 internal/database/sql-insert.templated.go internal/database/sql-query.templated.go:
 	( cd tools/template ; ./bin/template )

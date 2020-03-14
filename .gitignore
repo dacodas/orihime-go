@@ -1,6 +1,7 @@
 internal/database/sql-insert.templated.go
 internal/database/sql-query.templated.go
 **/*.pb.go
+**/*.pb.json.go
 tools/x509/**/*.pem
 tools/x509/**/*.sha256
 tools/x509/**/*.signed
