@@ -1,0 +1,66 @@
+#!/bin/bash
+
+set -euo pipefail
+
+PATH=${ORIHIME_ROOT}/build:${ORIHIME_ROOT}/tools/populate:${PATH}
+
+sha256() {
+	sha256sum | awk '{print $1}'
+}
+
+set -a
+
+ORIHIME_TEXT="「幕末」という15年間の内乱を経て"
+ORIHIME_TEXT_SOURCE="明治維新１５０年特集"
+
+ORIHIME_WORD_1="経る"
+ORIHIME_DEFINITION_1="$(goo-definition word ${ORIHIME_WORD_1})"
+ORIHIME_DEFINITION_SOURCE_1="goo辞書"
+ORIHIME_PARENT_HASH_1=$(echo -n "${ORIHIME_TEXT}" | sha256)
+
+ORIHIME_WORD_2="経由"
+ORIHIME_DEFINITION_2="$(goo-definition url 'https://dictionary.goo.ne.jp/word/%E7%B5%8C%E7%94%B1_%28%E3%81%91%E3%81%84%E3%82%86%29/')"
+ORIHIME_DEFINITION_SOURCE_2="goo辞書"
+ORIHIME_PARENT_HASH_2=$(echo -n "${ORIHIME_DEFINITION_1}" | sha256)
+
+ORIHIME_WORD_3="機関"
+ORIHIME_DEFINITION_3="$(goo-definition word ${ORIHIME_WORD_3})"
+ORIHIME_DEFINITION_SOURCE_3="goo辞書"
+ORIHIME_PARENT_HASH_3=$(echo -n "${ORIHIME_DEFINITION_2}" | sha256)
+
+ORIHIME_WORD_4="からくり"
+ORIHIME_DEFINITION_4="$(goo-definition word ${ORIHIME_WORD_4})"
+ORIHIME_DEFINITION_SOURCE_4="goo辞書"
+ORIHIME_PARENT_HASH_4=$(echo -n "${ORIHIME_DEFINITION_3}" | sha256)
+
+ORIHIME_WORD_4="からくり"
+ORIHIME_DEFINITION_4="$(goo-definition word ${ORIHIME_WORD_4})"
+ORIHIME_DEFINITION_SOURCE_4="goo辞書"
+ORIHIME_PARENT_HASH_4=$(echo -n "${ORIHIME_DEFINITION_3}" | sha256)
+
+ORIHIME_WORD_5="設ける"
+ORIHIME_DEFINITION_5="$(goo-definition word ${ORIHIME_WORD_5})"
+ORIHIME_DEFINITION_SOURCE_5="goo辞書"
+ORIHIME_PARENT_HASH_5=$(echo -n "${ORIHIME_DEFINITION_3}" | sha256)
+
+for VAR in ${!ORIHIME_*}
+do 
+	echo "${VAR}=${!VAR}"
+done
+
+orihime-server & 
+
+orihime add source "${ORIHIME_TEXT_SOURCE}"
+orihime add text "${ORIHIME_TEXT}" --source "${ORIHIME_TEXT_SOURCE}"
+
+for ID in $(seq 1 5)
+do
+	WORD=ORIHIME_WORD_${ID}
+	DEFINITION=ORIHIME_DEFINITION_${ID}
+	DEFINITION_SOURCE=ORIHIME_DEFINITION_SOURCE_${ID}
+	PARENT_HASH=ORIHIME_PARENT_HASH_${ID}
+
+	orihime add child-word "${!WORD}" --user 'dacoda.strack@gmail.com' --source "${!DEFINITION_SOURCE}" --parent-text "${!PARENT_HASH}" --definition "${!DEFINITION}" 
+	orihime-server & 
+	sleep 1
+done

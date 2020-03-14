@@ -1,0 +1,28 @@
+#!/bin/bash
+
+mkdir -p build
+
+if [ ! $# -eq 2 ] 
+then
+	echo "Specify word or url"
+	exit 1
+fi
+
+if [ $1 = word ]
+then
+	WORD=$2
+	URL=https://dictionary.goo.ne.jp/word/${WORD}
+else
+	URL=$2
+fi
+
+
+
+curl -s $URL \
+	| xmllint \
+		--html --htmlout \
+		--xpath '//div[@id="NR-main"]//div[@class="contents-wrap-b-in"]' \
+		/dev/stdin \
+		>build/${WORD}.html 2>/dev/null
+
+links -dump build/${WORD}.html
