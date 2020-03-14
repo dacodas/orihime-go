@@ -16,16 +16,20 @@ ${PREPARATION}
 ${SCAN_VARIABLES}
 	)
 
+${QUERY_PREPARATION}
+
 	for res.Next() {
+${QUERY_PREPARATION_PER_ROW}
 		err = res.Scan(${SCAN_VARIABLES_AS_SCAN_ARGUMENTS})
 		if err != nil {
 			log.Fatal(err)
 		} else {
 			log.Printf("${SCAN_VARIABLES_AS_FORMAT_STRING}", ${SCAN_VARIABLES_AS_FORMAT_ARGUMENTS})
+${QUERY_PROCESS_PER_ROW}
 		}
 	}
 
 	// log.Printf("${FUNCTION_NAME} ID = %d, affected = %d\n", lastId, rowCnt)
 
-	return 0
+	return ${RETURN}
 }

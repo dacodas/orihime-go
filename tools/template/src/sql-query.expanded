@@ -1,7 +1,7 @@
 TextTree
 parentTextHash []byte,
 user string
-int64
+[]*protobuf.TextTreeNode
 
 CALL TextTree(?, ?)
 parentTextHash, user
@@ -9,7 +9,12 @@ hash []byte
 id []byte
 word string
 definition string
-source string
+source string
+var response []*protobuf.TextTreeNode
+var currentTextTreeNode protobuf.TextTreeNode
+currentTextTreeNode = protobuf.TextTreeNode{ParentTextHash: hash, Word: word, Definition: definition, Source: source}
+response = append(response, &currentTextTreeNode)
+response
 
 ListSources
 
@@ -18,5 +23,9 @@ int64
 SELECT id, name FROM source
 
 id uint64
-name string
+name string
+
+
+
+0
 

@@ -43,6 +43,15 @@ prepare_environment_sql_query() {
 	export SQL_STATEMENT="${COLUMNS[4]}"
 	export ARGUMENTS="${COLUMNS[5]}"
 	export SCAN_VARIABLES="${COLUMNS[6]}"
+	export QUERY_PREPARATION="${COLUMNS[7]}"
+	export QUERY_PREPARATION_PER_ROW="${COLUMNS[8]}"
+	export QUERY_PROCESS_PER_ROW="${COLUMNS[9]}"
+	export RETURN="${COLUMNS[10]}"
+
+	for VAR in QUERY_PREPARATION QUERY_PROCESS_PER_ROW RETURN
+	do
+		echo "${VAR}=${!VAR}"
+	done
 
 	read SCAN_VARIABLES_AS_SCAN_ARGUMENTS \
 		< <( echo -n "${SCAN_VARIABLES}" | awk '{printf("&%s\n", $1)}' | paste -sd',' - | sed 's/,/, /g' )
