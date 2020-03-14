@@ -32,6 +32,13 @@ func AddSource(source string) {
 	InstantiatedOrihimeClient.AddSource(orihimeGRPCContext, &protobuf.SourceToAdd{Source: source}, options...)
 }
 
+func GetTextTree(textHash []byte, user string) {
+	reply, _ := InstantiatedOrihimeClient.TextTree(orihimeGRPCContext, &protobuf.TextTreeRequest{ParentTextHash: textHash, User: user}, options...)
+
+	log.Printf("%v", len(reply.Nodes))
+	log.Printf("%v", reply.Nodes)
+}
+
 func init() {
 
 	var md = metadata.Pairs(

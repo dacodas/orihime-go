@@ -54,3 +54,9 @@ func (s *OrihimeServer) AddChildWord(ctx context.Context, req *protobuf.ChildWor
 	database.AddChildWord(req.Word, req.Definition, req.Source, req.User, req.ParentTextHash)
 	return &protobuf.ChildWordAdded{}, nil
 }
+
+func (s *OrihimeServer) TextTree(ctx context.Context, req *protobuf.TextTreeRequest) (*protobuf.TextTreeReply, error) {
+	nodes := database.TextTree(req.ParentTextHash, req.User)
+
+	return &protobuf.TextTreeReply{Nodes: nodes}, nil
+}
