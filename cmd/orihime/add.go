@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"fmt"
 	"log"
 	"strings"
 	"encoding/hex"
@@ -29,7 +28,7 @@ func pipedToStdin() bool {
 	state, _ := os.Stdin.Stat()
 
 	if ( state.Mode() & os.ModeCharDevice ) == 0 {
-		fmt.Println("There is data being piped in to stdin")
+		log.Printf("There is data being piped in to stdin")
 		return true
 	} else {
 		return false
@@ -49,13 +48,13 @@ func checkStdinOrAnotherArgument(args []string) {
 
 	switch inputStatus {
 	case 0:
-		fmt.Println("Error: Input was provided neither from stdin nor as an argument")
+		log.Printf("Error: Input was provided neither from stdin nor as an argument")
 		os.Exit(1)
 	case 1:
-		fmt.Println("Using argument to add orihime object...")
+		log.Printf("Using argument to add orihime object...")
 		Input = args[1]
 	case 2:
-		fmt.Println("Using stdin to add orihime object...")
+		log.Printf("Using stdin to add orihime object...")
 		buf, err := ioutil.ReadFile("/dev/stdin")
 		if err != nil {
 			log.Fatal(err)
@@ -63,15 +62,15 @@ func checkStdinOrAnotherArgument(args []string) {
 		}
 		Input = string(buf)
 	case 3:
-		fmt.Println("Error: Input was piped to stdin and an argument was passed to add")
+		log.Printf("Error: Input was piped to stdin and an argument was passed to add")
 		os.Exit(1)
 	}
 
-	fmt.Println("Input status is ", inputStatus)
+	log.Printf("Input status is ", inputStatus)
 }
 
 func exitNotSpecified(unspecifiedObject string) {
-	fmt.Println("Error: " + unspecifiedObject + " not specified")
+	log.Printf("Error: %v not specified", unspecifiedObject)
 	os.Exit(1)
 }
 
@@ -126,7 +125,7 @@ func determineWhatToAdd(args []string) {
 		ensureSource()
 		client.AddText(Input, Source)
 	default:
-		fmt.Println("Unknown orihime object to add: " + args[0])
+		log.Printf("Unknown orihime object to add: %v", args[0])
 	}
 }
 
@@ -136,7 +135,7 @@ var addCmd = &cobra.Command{
 	Long: "",
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("add called with " + strings.Join(args, " "))
+		log.Printf("add called with %v", strings.Join(args, " "))
 		checkStdinOrAnotherArgument(args)
 		determineWhatToAdd(args)
 	},

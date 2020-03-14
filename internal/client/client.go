@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"log"
+	"fmt"
 	"orihime/internal/protobuf"
 	grpc "google.golang.org/grpc"
 	metadata "google.golang.org/grpc/metadata"
@@ -41,6 +42,8 @@ func GetTextTree(textHash []byte, user string) {
 
 	jsonString, _ := json.Marshal(reply.Nodes)
 	log.Printf("%v", string(jsonString))
+
+	fmt.Printf("%v", string(jsonString))
 }
 
 func init() {
