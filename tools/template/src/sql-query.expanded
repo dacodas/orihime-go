@@ -12,7 +12,7 @@ definition string
 source string
 var response []*protobuf.TextTreeNode
 var currentTextTreeNode protobuf.TextTreeNode
-currentTextTreeNode = protobuf.TextTreeNode{ParentTextHash: hash, Word: word, Definition: definition, Source: source}
+currentTextTreeNode = protobuf.TextTreeNode{ParentTextHash: hash, Word: word, Definition: definition, Source: source, DefinitionHash: id}
 response = append(response, &currentTextTreeNode)
 response
 

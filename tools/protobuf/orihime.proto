@@ -59,6 +59,7 @@ message TextTreeNode {
     string word = 2;
     string definition = 3;
     string source = 4;
+    bytes definitionHash = 5;
 }
 
 message TextTreeReply {
