@@ -1,15 +1,19 @@
-func AddChildWord (word string,
-	definition string,
-	source string,
-	user string,
-	parentTextHash []byte) int64
+AddChildWord
+word string,
+definition string,
+source string,
+user string,
+parentTextHash []byte
+int64
 wordId := AddWord(word, definition, source)
 AddWordRelation(user, parentTextHash, wordId)
 
 
 
-func AddText (contents string,
-	source string) int64
+AddText
+contents string,
+source string
+int64
 textHash := sha256.Sum256([]byte(contents))
 INSERT INTO text (contents, hash, source)
 SELECT
@@ -18,9 +22,11 @@ SELECT
 	source.id AS source
 FROM source WHERE source.name = ?
 contents, textHash[:], source
-func AddWord(word string,
-	definitionText string,
-	source string) int64
+AddWord
+word string,
+definitionText string,
+source string
+int64
 
 definitionTextId := AddText(definitionText, source)
 log.Printf("Using %v as the foreign key for this next word", definitionTextId)
@@ -28,13 +34,17 @@ log.Printf("Using %v as the foreign key for this next word", definitionTextId)
 INSERT INTO word (word, definition)
 VALUES (?, ?)
 word, definitionTextId
-func AddSource(source string) int64
+AddSource
+source string
+int64
 
 INSERT INTO source (name) VALUES (?)
 source
-func AddWordRelation(userEmail string,
-	parentTextHash []byte,
-	wordId int64) int64
+AddWordRelation
+userEmail string,
+parentTextHash []byte,
+wordId int64
+int64
 
 INSERT INTO word_relation (user, text, word)
 SELECT
@@ -45,7 +55,3 @@ FROM user
 INNER JOIN text ON text.hash = ?
 WHERE user.email = ?
 wordId, parentTextHash[:], userEmail
-func TextTree(parentTextHash []byte, user string) int64
-
-CALL TextTree(?, ?)
-parentTextHash, user

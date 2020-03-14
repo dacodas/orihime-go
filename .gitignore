@@ -1,4 +1,5 @@
-internal/database/sql.template.go
+internal/database/sql-insert.templated.go
+internal/database/sql-query.templated.go
 **/*.pb.go
 tools/x509/**/*.pem
 tools/x509/**/*.sha256

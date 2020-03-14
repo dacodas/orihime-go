@@ -5,48 +5,97 @@ set -euo pipefail
 SEPARATOR_1="$(printf '\x1F')"
 SEPARATOR_2="$(printf '\x1E')"
 
-loop_over_configuration() {
+TEMPLATES="sql-insert sql-query"
+PATH="${PWD}/bin:${PATH}"
+
+: ${ORIHIME_ROOT:=../../}
+
+loop_over_functions() {
+	BASH_FRIENDLY_TEMPLATE=${TEMPLATE//-/_}
 	while IFS=${SEPARATOR_1} read -a COLUMNS "-d${SEPARATOR_2}"
 	do 
-		export COLUMNS
+		prepare_environment_${BASH_FRIENDLY_TEMPLATE}
 		${@}
-	done < build/function-skeletons.contracted
+	done < build/${TEMPLATE}.contracted
+}
+
+loop_over_templates() { 
+	for TEMPLATE in ${TEMPLATES}
+	do
+		${@}
+	done
+}
+
+prepare_environment_sql_insert() {
+	export FUNCTION_NAME="${COLUMNS[0]}"
+	export IN_PARAMETERS="${COLUMNS[1]}"
+	export OUT_PARAMETERS="${COLUMNS[2]}"
+	export PREPARATION="${COLUMNS[3]}"
+	export SQL_STATEMENT="${COLUMNS[4]}"
+	export ARGUMENTS="${COLUMNS[5]}"
+}
+
+prepare_environment_sql_query() {
+	export FUNCTION_NAME="${COLUMNS[0]}"
+	export IN_PARAMETERS="${COLUMNS[1]}"
+	export OUT_PARAMETERS="${COLUMNS[2]}"
+	export PREPARATION="${COLUMNS[3]}"
+	export SQL_STATEMENT="${COLUMNS[4]}"
+	export ARGUMENTS="${COLUMNS[5]}"
+	export SCAN_VARIABLES="${COLUMNS[6]}"
+
+	read SCAN_VARIABLES_AS_SCAN_ARGUMENTS \
+		< <( echo -n "${SCAN_VARIABLES}" | awk '{printf("&%s\n", $1)}' | paste -sd',' - | sed 's/,/, /g' )
+	read SCAN_VARIABLES_AS_FORMAT_STRING \
+		< <( echo -n "${SCAN_VARIABLES}" | sed 's/.*/%v/' | paste -sd',' | sed 's/,/, /g')
+	read SCAN_VARIABLES_AS_FORMAT_ARGUMENTS \
+		< <( echo -n "${SCAN_VARIABLES}" | awk '{printf("%s\n", $1)}' | paste -sd',' - | sed 's/,/, /g' )
+
+	export SCAN_VARIABLES_AS_SCAN_ARGUMENTS
+	export SCAN_VARIABLES_AS_FORMAT_STRING
+	export SCAN_VARIABLES_AS_FORMAT_ARGUMENTS
 }
 
 perform_envsubst() {
-	FUNCTION_SIGNATURE="${COLUMNS[0]}" \
-	PREPARATION="${COLUMNS[1]}" \
-	SQL_STATEMENT="${COLUMNS[2]}" \
-	ARGUMENTS="${COLUMNS[3]}" \
-	envsubst < template/sql-insert-skeleton | tee -a build/templated-functions
+	envsubst < template/${TEMPLATE}-skeleton >> build/${TEMPLATE}-templated
 }
 
 template_functions() {
-	< /dev/null > build/templated-functions
+	< /dev/null > build/${TEMPLATE}-templated
 
-	loop_over_configuration perform_envsubst
+	loop_over_functions perform_envsubst
 
-	cat template/preamble build/templated-functions > build/sql.go
+	cat template/${TEMPLATE}-preamble build/${TEMPLATE}-templated > build/${TEMPLATE}.templated.go
+	go fmt build/${TEMPLATE}.templated.go
 }
 
-show_signature() {
-	echo "${COLUMNS[0]}"
+contract() {
+	separator-control contract \
+		< src/${TEMPLATE}.expanded \
+		> build/${TEMPLATE}.contracted
 }
 
-show_signatures() {
-	loop_over_configuration show_signature
+move_to_proper_source_locations() {
+	cp build/${TEMPLATE}.templated.go ${ORIHIME_ROOT}/internal/database/${TEMPLATE}.templated.go
+}
+
+test_func() {
+	echo "Womp"
+}
+
+t() {
+	TEMPLATE=sql-query 
+	contract
+	template_functions
+	loop_over_functions test_func
 }
 
 main() {
 	mkdir -p build
 
-	./bin/separator-control contract \
-		< src/function-skeletons.expanded \
-		> build/function-skeletons.contracted
-
-	template_functions
-
-	cp ./build/sql.go ../../internal/database/sql.template.go
+	loop_over_templates contract
+	loop_over_templates template_functions
+	loop_over_templates move_to_proper_source_locations
 }
 
 if [ $# -eq 0 ]
@@ -56,8 +105,8 @@ then
 fi
 
 case $1 in 
-show-signatures)
-	show_signatures	
+t)
+	t
 	;;
 *)	
 	main

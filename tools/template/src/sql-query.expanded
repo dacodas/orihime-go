@@ -1,0 +1,22 @@
+TextTree
+parentTextHash []byte,
+user string
+int64
+
+CALL TextTree(?, ?)
+parentTextHash, user
+hash []byte
+id []byte
+word string
+definition string
+source string
+
+ListSources
+
+int64
+
+SELECT id, name FROM source
+
+id uint64
+name string
+
