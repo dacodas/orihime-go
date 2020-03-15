@@ -1,2 +1,4 @@
 server:
-  listen: xn--t8j3dxb8a.xn--q9jyb4c:5556
+    listen: "xn--t8j3dxb8a.xn--q9jyb4c:5556"
+database:
+    dataSourceName: "orihime:KEEP THIS CONFIG SECURE YOUR PASSWORD GOES HERE@tcp(127.0.0.1:3306)/orihime"

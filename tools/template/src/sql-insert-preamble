@@ -5,9 +5,11 @@ import (
 	"database/sql"
 	"crypto/sha256"
 	_ "github.com/go-sql-driver/mysql"
+
+	"orihime/internal/server/config"
 )
 
-var db, err = sql.Open("mysql", "root:dacodastrackoda@tcp(127.0.0.1:3306)/orihime")
+var db, err = sql.Open("mysql", config.Config.Database.DataSourceName)
 
 func checkDatabase() {
 	if err != nil {

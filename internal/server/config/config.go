@@ -8,6 +8,9 @@ import (
 )
 
 type _Config struct {
+	Database struct {
+		DataSourceName string `yaml:"dataSourceName"`
+	}
 	Server struct {
 		Listen string
 	}
@@ -21,6 +24,7 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+	log.Printf("File: %v", string(contents))
 
 	err = yaml.Unmarshal(contents, &Config)
 	if err != nil {
