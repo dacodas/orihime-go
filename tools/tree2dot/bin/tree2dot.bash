@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HASH=582ae28bf547cae7ea6b0cb8c43cbb6d73f5c5f38ebe9c9b500c59f5cf83abe8 
+HASH="$1"
 
 TREE=$(build/orihime get text-tree ${HASH} --user 'dacoda.strack@gmail.com') 
 
