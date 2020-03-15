@@ -2,27 +2,80 @@
 
 mkdir -p build
 
+WORK_FOLDER=$(mktemp -td goo-definition.XXXXXXX)
+XMLLINT_STDERR=$(mktemp -p ${WORK_FOLDER} -t xmllint.stderr.XXXXXX)
+HTML2TEXT_FILE=$(mktemp -p ${WORK_FOLDER} -t html2text.XXXXXX)
+
+cleanup() {
+	rm -r ${WORK_FOLDER}
+}
+
+html2text() {
+	cat > ${HTML2TEXT_FILE}
+	links ${@} -dump ${HTML2TEXT_FILE}
+}
+
+search_li() {
+	xmllint \
+		--html --htmlout \
+		--xpath '//div[@id="NR-main"]//div[@class="example_sentence"]/ul/li' \
+		/dev/stdin 2>${XMLLINT_STDERR}
+}
+
+contents_div() {
+	xmllint \
+		--html --htmlout \
+		--xpath '//div[@id="NR-main"]//div[@class="contents-wrap-b-in"]' \
+		/dev/stdin 2>${XMLLINT_STDERR}
+}
+
+search() {
+	echo -n "LEMMEKNOW ${1}" | nc 127.0.0.1 7081 
+}
+
+parse() {
+	while IFS=$(printf '\x1f') read WORD ENTRY_NUMBER
+	do
+		echo "${WORD} is found at ${ENTRY_NUMBER}"
+	done
+}
+
+first_result() {
+	while IFS=$(printf '\x1f') read WORD ENTRY_NUMBER
+	do
+		cat /mnt/gentoo-root/dictionary/${ENTRY_NUMBER}.html
+		break
+	done
+}
+
 if [ ! $# -eq 2 ] 
 then
-	echo "Specify word or url"
+	echo "Specify how to search for word"
 	exit 1
 fi
 
-if [ $1 = word ]
-then
-	WORD=$2
-	URL=https://dictionary.goo.ne.jp/word/${WORD}
-else
-	URL=$2
-fi
+case $1 in
+	word-remote)
+		WORD=$2
+		URL=https://dictionary.goo.ne.jp/word/${WORD}
+		curl -s $URL | contents_div | html2text
+		;;
+	search-remote)
+		WORD=$2
+		URL=https://dictionary.goo.ne.jp/srch/jn/${WORD}/m0u/
+		curl -s $URL | search_li | html2text -no-numbering
+		;;
+	link-remote)
+		URL=$2
+		curl -s $URL | contents_div | html2text
+		;;
+	search)
+		WORD=$2
+		search ${WORD} | parse
+		;;
+	word)
+		WORD=$2
+		search ${WORD} | first_result | html2text
+		;;
+esac
 
-
-
-curl -s $URL \
-	| xmllint \
-		--html --htmlout \
-		--xpath '//div[@id="NR-main"]//div[@class="contents-wrap-b-in"]' \
-		/dev/stdin \
-		>build/${WORD}.html 2>/dev/null
-
-links -dump build/${WORD}.html

@@ -19,7 +19,7 @@ ORIHIME_DEFINITION_SOURCE_1="goo辞書"
 ORIHIME_PARENT_HASH_1=$(echo -n "${ORIHIME_TEXT}" | sha256)
 
 ORIHIME_WORD_2="経由"
-ORIHIME_DEFINITION_2="$(goo-definition url 'https://dictionary.goo.ne.jp/word/%E7%B5%8C%E7%94%B1_%28%E3%81%91%E3%81%84%E3%82%86%29/')"
+ORIHIME_DEFINITION_2="$(goo-definition word ${ORIHIME_WORD_2})"
 ORIHIME_DEFINITION_SOURCE_2="goo辞書"
 ORIHIME_PARENT_HASH_2=$(echo -n "${ORIHIME_DEFINITION_1}" | sha256)
 
