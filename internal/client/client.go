@@ -4,16 +4,19 @@ import (
 	"context"
 	"log"
 	"fmt"
-	"orihime/internal/protobuf"
-	grpc "google.golang.org/grpc"
-	metadata "google.golang.org/grpc/metadata"
 	"encoding/base64"
 	"encoding/json"
+
+	grpc "google.golang.org/grpc"
+	metadata "google.golang.org/grpc/metadata"
+
+	"orihime/internal/protobuf"
+	"orihime/internal/client/config"
 )
 
 var (
 	InstantiatedOrihimeClient protobuf.OrihimeClient
-	serverAddress string = "localhost:12345"
+	serverAddress string = config.Config.Server.Endpoint
 	orihimeGRPCContext context.Context
 	options []grpc.CallOption
 )

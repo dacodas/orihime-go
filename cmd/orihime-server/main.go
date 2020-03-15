@@ -6,10 +6,13 @@ import (
 	grpc "google.golang.org/grpc"
 	"orihime/internal/protobuf"
 	"orihime/internal/server"
+	"orihime/internal/server/config"
 )
 
 func main() {
-	lis, err := net.Listen("tcp", "localhost:12345")
+	log.Printf("%v", config.Config)
+
+	lis, err := net.Listen("tcp", config.Config.Server.Listen)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
