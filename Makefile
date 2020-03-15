@@ -31,7 +31,10 @@ build:
 internal/protobuf/orihime.pb.go internal/protobuf/orihime.pb.json.go: tools/protobuf/orihime.proto
 	( cd tools/protobuf ; protoc --go_out=plugins=grpc:${ORIHIME_ROOT}/internal/protobuf --go-json_out=${ORIHIME_ROOT}/internal/protobuf orihime.proto )
 
-internal/database/sql-insert.templated.go internal/database/sql-query.templated.go:
+internal/database:
+	mkdir -p internal/database
+
+internal/database/sql-insert.templated.go internal/database/sql-query.templated.go: internal/database
 	( cd tools/template ; ./bin/template )
 
 internal/database/sql-insert.templated.go: \
