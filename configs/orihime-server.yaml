@@ -1,4 +1,6 @@
 server:
     listen: "xn--t8j3dxb8a.xn--q9jyb4c:5556"
+    certificate: tools/x509/orihime-minna-x509/orihime-server.crt
+    key: tools/x509/orihime-minna-x509/orihime-server.key
 database:
     dataSourceName: "orihime:KEEP THIS CONFIG SECURE YOUR PASSWORD GOES HERE@tcp(127.0.0.1:3306)/orihime"

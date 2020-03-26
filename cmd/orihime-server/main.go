@@ -4,6 +4,7 @@ import (
 	"net"
 	"log"
 	grpc "google.golang.org/grpc"
+	credentials "google.golang.org/grpc/credentials"
 	"orihime/internal/protobuf"
 	"orihime/internal/server"
 	"orihime/internal/server/config"
@@ -16,8 +17,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	// grpcServer := grpc.NewServer(opts...)
-	grpcServer := grpc.NewServer()
+
+	creds, err := credentials.NewServerTLSFromFile(config.Config.Server.Certificate, config.Config.Server.Key)
+	if err != nil {
+		panic(err)
+	}
+
+	grpcServer := grpc.NewServer(grpc.Creds(creds))
 	protobuf.RegisterOrihimeServer(grpcServer, server.NewServer())
 	grpcServer.Serve(lis)
 }

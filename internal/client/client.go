@@ -6,7 +6,11 @@ import (
 	"fmt"
 	"encoding/base64"
 	"encoding/json"
+	"crypto/x509"
+	"crypto/tls"
+	"io/ioutil"
 
+	credentials "google.golang.org/grpc/credentials"
 	grpc "google.golang.org/grpc"
 	metadata "google.golang.org/grpc/metadata"
 
@@ -16,7 +20,6 @@ import (
 
 var (
 	InstantiatedOrihimeClient protobuf.OrihimeClient
-	serverAddress string = config.Config.Server.Endpoint
 	orihimeGRPCContext context.Context
 	options []grpc.CallOption
 )
@@ -60,13 +63,29 @@ func init() {
 
 	options = []grpc.CallOption{}
 
-	connection, err := grpc.Dial(serverAddress, grpc.WithBlock(), grpc.WithInsecure())
+	certsFile, _ := ioutil.ReadFile(config.Config.Server.CertificateAuthorities)
+
+	clientCertificate, err := tls.LoadX509KeyPair(config.Config.Client.Certificate, config.Config.Client.Key)
+	if err != nil {
+		panic(err)
+	}
+
+	certPool := x509.NewCertPool()
+	if !certPool.AppendCertsFromPEM(certsFile) {
+		log.Fatal("Could not append certificates from file: ", certsFile)
+	}
+
+	tlsConfig := &tls.Config{
+		ServerName: config.Config.Server.HostnameToVerify,
+		InsecureSkipVerify: false,
+		RootCAs: certPool,
+		Certificates: []tls.Certificate {clientCertificate},
+	}
+
+	connection, err := grpc.Dial(config.Config.Server.Endpoint, grpc.WithBlock(), grpc.WithTransportCredentials(credentials.NewTLS(tlsConfig)))
 	if err != nil {
 		log.Fatalf("failed to dial: %v", err)
 	}
-	// defer connection.Close()
 
 	InstantiatedOrihimeClient = protobuf.NewOrihimeClient(connection)
 }
-
-

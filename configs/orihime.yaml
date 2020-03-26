@@ -1,2 +1,7 @@
 server:
-  endpoint: xn--t8j3dxb8a.xn--q9jyb4c:5556
+    endpoint: xn--t8j3dxb8a.xn--q9jyb4c:5556
+    hostnameToVerify: xn--t8j3dxb8a.xn--q9jyb4c
+    certificateAuthorities: tools/x509/orihime-minna-x509/ca.crt
+client:
+    certificate: tools/x509/orihime-minna-x509/orihime-client.crt
+    key: tools/x509/orihime-minna-x509/orihime-client.key

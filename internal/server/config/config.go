@@ -13,18 +13,24 @@ type _Config struct {
 	}
 	Server struct {
 		Listen string
+		Key string
+		Certificate string
 	}
 }
 
 var Config _Config
 
 func init() {
+	configurationFile := os.Getenv("ORIHIME_SERVER_CONFIG")
+	if len(configurationFile) == 0 {
+		log.Fatal("ORIHIME_SERVER_CONFIG is not defined")
+		os.Exit(1)
+	}
 
-	contents, err := ioutil.ReadFile(os.Getenv("ORIHIME_SERVER_CONFIG"))
+	contents, err := ioutil.ReadFile(configurationFile)
 	if err != nil {
 		panic(err)
 	}
-	log.Printf("File: %v", string(contents))
 
 	err = yaml.Unmarshal(contents, &Config)
 	if err != nil {
